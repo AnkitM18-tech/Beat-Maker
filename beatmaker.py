@@ -33,6 +33,32 @@ active_length = 0
 active_beat = 1
 beat_changed = True
 
+# Loading Sounds
+hi_hat = mixer.Sound("./sounds/hi hat.WAV")
+snare = mixer.Sound("./sounds/snare.WAV")
+kick = mixer.Sound("./sounds/kick.WAV")
+crash = mixer.Sound("./sounds/crash.wav")
+clap = mixer.Sound("./sounds/clap.wav")
+floor_tom = mixer.Sound("./sounds/tom.WAV")
+pygame.mixer.set_num_channels(instruments * 3)
+
+# Play Notes Function
+def play_notes():
+    for i in range(len(clicked)):
+        if clicked[i][active_beat] == 1:
+            if i == 0:
+                hi_hat.play()
+            elif i == 1:
+                snare.play()
+            elif i == 2:
+                kick.play()
+            elif i == 3:
+                crash.play()
+            elif i == 4:
+                clap.play()
+            elif i == 5:
+                floor_tom.play()
+                
 # Grid drawing function
 def draw_grid(clicked,beat):
     # Menu boxes
@@ -67,6 +93,7 @@ def draw_grid(clicked,beat):
             boxes.append((rect,(i,j)))
         active = pygame.draw.rect(screen,blue,[beat * (WIDTH - 200) // beats + 200,0,((WIDTH - 200) // beats),instruments * 100],5,3)
     return boxes
+    
 
 # Running the Beats!!
 run = True
@@ -74,7 +101,10 @@ while run:
     timer.tick(fps)
     screen.fill(black)
     boxes = draw_grid(clicked,active_beat)
-
+    if beat_changed:
+        play_notes()
+        beat_changed = False
+    # Clicked Beats Detection
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             run = False
@@ -83,7 +113,7 @@ while run:
                 if boxes[i][0].collidepoint(event.pos):
                     coords = boxes[i][1]
                     clicked[coords[1]][coords[0]] *= -1
-                    
+    # Beat Tracker
     beat_length = 3600 // bpm
     if playing:
         if active_length < beat_length:
