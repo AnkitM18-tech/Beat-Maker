@@ -112,25 +112,65 @@ while run:
     else:
         play_text2 = medium_font.render("Paused", True, dark_gray)
     screen.blit(play_text2, (70, HEIGHT - 90))
+    # BPM Settings
+    bpm_rect = pygame.draw.rect(screen, gray, [300,HEIGHT - 150, 200, 100],5,5)
+    bpm_text = medium_font.render("Beats Per Minute", True,white)
+    screen.blit(bpm_text, (308, HEIGHT - 130))
+    bpm_text2 = label_font.render(f"{bpm}", True,white)
+    screen.blit(bpm_text2, (370, HEIGHT - 100))
+    bpm_add_rect = pygame.draw.rect(screen, gray,[510,HEIGHT-150,48,48],0,5)
+    bpm_sub_rect = pygame.draw.rect(screen, gray,[510,HEIGHT-100,48,48],0,5)
+    add_text = medium_font.render("+5",True,white)
+    sub_text = medium_font.render("-5",True,white)
+    screen.blit(add_text, (520, HEIGHT - 140))
+    screen.blit(sub_text, (520, HEIGHT - 90))
+    # Beats Settings
+    beats_rect = pygame.draw.rect(screen, gray, [600,HEIGHT - 150, 200, 100],5,5)
+    beats_text = medium_font.render("Beats In Loop", True,white)
+    screen.blit(beats_text, (630, HEIGHT - 130))
+    beats_text2 = label_font.render(f"{beats}", True,white)
+    screen.blit(beats_text2, (690, HEIGHT - 100))
+    beats_add_rect = pygame.draw.rect(screen, gray,[810,HEIGHT-150,48,48],0,5)
+    beats_sub_rect = pygame.draw.rect(screen, gray,[810,HEIGHT-100,48,48],0,5)
+    add_text2 = medium_font.render("+1",True,white)
+    sub_text2 = medium_font.render("-1",True,white)
+    screen.blit(add_text2, (820, HEIGHT - 140))
+    screen.blit(sub_text2, (820, HEIGHT - 90))
     # Playing Beats
     if beat_changed:
         play_notes()
         beat_changed = False
     # Clicked Beats Detection
     for event in pygame.event.get():
+        # Quit
         if event.type == pygame.QUIT:
             run = False
+        # Clicked Instrument Beat
         if event.type == pygame.MOUSEBUTTONDOWN:
             for i in range(len(boxes)):
                 if boxes[i][0].collidepoint(event.pos):
                     coords = boxes[i][1]
                     clicked[coords[1]][coords[0]] *= -1
+        # Button Pressed
         if event.type == pygame.MOUSEBUTTONUP:
             if play_pause.collidepoint(event.pos):
                 if playing:
                     playing = False
                 elif not playing:
                     playing = True
+            elif bpm_add_rect.collidepoint(event.pos):
+                bpm += 5
+            elif bpm_sub_rect.collidepoint(event.pos):
+                bpm -= 5
+            elif beats_add_rect.collidepoint(event.pos):
+                beats += 1
+                for i in range(len(clicked)):
+                    clicked[i].append(-1)
+            elif beats_sub_rect.collidepoint(event.pos):
+                beats -= 1
+                for i in range(len(clicked)):
+                    clicked[i].pop(-1)
+
     # Beat Tracker
     beat_length = 3600 // bpm
     if playing:
